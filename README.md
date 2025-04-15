@@ -12,4 +12,4 @@ In order to create a continuous CA rule, we will need have rules account for cel
 
 # Acknowledge
 
-The program is inspired by Conway's ame of Life by John Horton Conway in 1970. In the profess, I referenced class materials and Labs developed by Professor Anya Vostinar for CS361 Artificial Life and Digital Evolution(Spring 2025).
+The program is inspired by Conway's ame of Life by John Horton Conway in 1970. In the process, I referenced class materials and Labs developed by Professor Anya Vostinar for CS361 Artificial Life and Digital Evolution(Spring 2025).
