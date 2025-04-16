@@ -74,14 +74,15 @@ private:
                         if (neighbor_val >= 0.5) num_alive++;
                     }
                 }
-                float avg = sum / 8.0;
-                float current = cells[x][y];
-
-                //CA rule: dynamic decay/growth based on neighborhood density
-                float next = current + (avg - current) * 0.7;  
-                if (num_alive < 3) next -= 0.8;
-                else if (num_alive > 5) next += 0.8;
-
+                // Apply CA rules
+                float avg = sum/8;
+                float next = 0;
+                if (num_alive < 5 && num_alive > 1) {
+                   next = avg + (cells[x][y] * 0.8);
+                }
+                else if (num_alive > 5 && num_alive < 7) {
+                   next = avg - (cells[x][y] * 0.8);
+               }
 
                 // Clamp between 0 and 1
                 nextCells[x][y] = std::min(1.0f, std::max(0.0f, next));
