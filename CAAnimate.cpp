@@ -61,31 +61,21 @@ private:
     void apply_rules() {
         for (int x = 0; x < num_w_boxes; x++) {
             for (int y = 0; y < num_h_boxes; y++) {
-                float sum = 0;
-                int num_alive = 0;
+        
+                int alive_neighbors = count_alive_neighbors(x,y);
+                float neighbor_average = average_neighbors(x,y);
+                float next_value = 0.0f;
 
-                for (int dx = -1; dx <= 1; dx++) {
-                    for (int dy = -1; dy <= 1; dy++) {
-                        if (dx == 0 && dy == 0) continue;
-                        int nx = emp::Mod(x + dx, num_w_boxes);
-                        int ny = emp::Mod(y + dy, num_h_boxes);
-                        float neighbor_val = cells[nx][ny];
-                        sum += neighbor_val;
-                        if (neighbor_val >= 0.5) num_alive++;
-                    }
-                }
                 // Apply CA rules
-                float avg = sum/8;
-                float next = 0;
-                if (num_alive < 5 && num_alive > 1) {
-                   next = avg + (cells[x][y] * 0.8);
+                if (alive_neighbors < 5 && alive_neighbors > 1) {
+                   next_value = neighbor_average + (cells[x][y] * 0.8);
                 }
-                else if (num_alive > 5 && num_alive < 7) {
-                   next = avg - (cells[x][y] * 0.8);
+                else if (alive_neighbors > 5 && alive_neighbors < 7) {
+                   next_value = neighbor_average - (cells[x][y] * 0.8);
                }
 
                 // Clamp between 0 and 1
-                nextCells[x][y] = std::min(1.0f, std::max(0.0f, next));
+                nextCells[x][y] = std::min(1.0f, std::max(0.0f, next_value));
             }
         }
     }
@@ -94,6 +84,37 @@ private:
     void update_cells() {
         cells = nextCells;
     }
+
+    /* Count the number of neighbors alive for a given cell */
+    int count_alive_neighbors(int x, int y){
+        int alive_neighbors = 0;
+        for (int horizontal = -1; horizontal <= 1; horizontal++) {
+            for (int vertical = -1; vertical <= 1; vertical++) {
+                if (horizontal == 0 && vertical == 0) continue; // skip center
+                int neighbor_x = emp::Mod(x + horizontal, num_w_boxes);
+                int neighbor_y = emp::Mod(y + vertical, num_h_boxes);
+                if (cells[neighbor_x][neighbor_y] > 0.5) {
+                    alive_neighbors++;
+                }
+            }
+        }
+        return alive_neighbors;
+    }
+
+    /* Find the average values of the neighbors for a given cell */
+    float average_neighbors(int x, int y){
+        float sum = 0;
+        for (int horizontal = -1; horizontal <= 1; horizontal++) {
+            for (int vertical = -1; vertical <= 1; vertical++) {
+                if (horizontal == 0 && vertical == 0) continue; // skip center
+                int neighbor_x = emp::Mod(x + horizontal, num_w_boxes);
+                int neighbor_y = emp::Mod(y + vertical, num_h_boxes);
+                sum += cells[neighbor_x][neighbor_y];
+            }
+        }
+        return (sum/8);
+    }
+
 };
 CAAnimator animator;
 
